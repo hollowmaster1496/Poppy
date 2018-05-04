@@ -113,20 +113,9 @@ void loop() {
 
   }
 
-  /*// Wait (LED still high from last iteration)
-  while (val==HIGH) {
-    val=digitalRead(buttonPin);
-  }
-   
-  while (val==LOW) {
-    digitalWrite(led_fc04,LOW);
-    val=digitalRead(buttonPin);
-  }
-  */
     
   prev_pop_state=reading;
-
-  // print the number of seconds since reset:
   lcd.print(count);
+
 }
 
