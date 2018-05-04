@@ -47,9 +47,9 @@
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
-// Declare the FC-04 ports
-int Led=13;         //define LED port
-int buttonpin=3;    //define switch port
+// Declare the FC-04 (sound sensor) ports
+int led_fc04=13;         //define LED port
+int buttonPin=3;    //define switch port (D3)
 int  val;           //define digital variable val
 
 int count=0;
@@ -63,7 +63,7 @@ void setup() {
 
   // Define output and input ports
   pinMode(Led,OUTPUT);
-  pinMode(buttonpin,INPUT);
+  pinMode(buttonPin,INPUT);
 }
 
 void loop() {
@@ -71,28 +71,19 @@ void loop() {
   // (note: line 1 is the second row, since counting begins with 0):
   lcd.setCursor(0, 1);
 
-
-  //val=digitalRead(buttonpin); //read the value of the digital interface 3 assigned to val
   // Wait (LED still high from last iteration)
   while (val==HIGH) {
-    val=digitalRead(buttonpin);
+    val=digitalRead(buttonPin);
   }
    
   while (val==LOW) {
-    digitalWrite(Led,LOW);
-    val=digitalRead(buttonpin);
+    digitalWrite(led_fc04,LOW);
+    val=digitalRead(buttonPin);
   }
-  
-  //if(val==HIGH)
-  //{
     
-    // blink LED when "Pop" is detected
-    digitalWrite(Led, HIGH);
-    count++;
-
-    //Serial.print("now low");
-    
-  //}
+  // blink LED when "Pop" is detected
+  digitalWrite(led_fc04, HIGH);
+  count++;
 
   
   // print the number of seconds since reset:
