@@ -72,15 +72,19 @@ void loop() {
   lcd.setCursor(0, 1);
 
 
-  val=digitalRead(buttonpin); //read the value of the digital interface 3 assigned to val 
-  if(val==HIGH)
-  {
-    
-    // Wait (LED still high from last iteration)
-    while (digitalRead(Led) == HIGH) {
-      //Serial.print("still high");
-      //Serial.print("count");
-    }
+  //val=digitalRead(buttonpin); //read the value of the digital interface 3 assigned to val
+  // Wait (LED still high from last iteration)
+  while (val==HIGH) {
+    val=digitalRead(buttonpin);
+  }
+   
+  while (val==LOW) {
+    digitalWrite(Led,LOW);
+    val=digitalRead(buttonpin);
+  }
+  
+  //if(val==HIGH)
+  //{
     
     // blink LED when "Pop" is detected
     digitalWrite(Led, HIGH);
@@ -88,11 +92,8 @@ void loop() {
 
     //Serial.print("now low");
     
-  }
-  else
-  {
-    digitalWrite(Led,LOW);
-  }
+  //}
+
   
   // print the number of seconds since reset:
   lcd.print(count);
