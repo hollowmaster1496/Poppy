@@ -1,4 +1,5 @@
 
+
 //www.elegoo.com
 //2016.12.9
 
@@ -43,6 +44,7 @@
 
 // include the library code:
 #include <LiquidCrystal.h>
+#include <elapsedMillis.h>
 
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
@@ -50,7 +52,13 @@ LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 // Declare the FC-04 (sound sensor) ports
 int led_fc04=13;         //define LED port
 int buttonPin=3;    //define switch port (D3)
+
 int  val;           //define digital variable val
+int  pop_state;     //define "pop" state
+int  prev_pop_state;
+
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 0.003;
 
 int count=0;
 
@@ -62,8 +70,12 @@ void setup() {
   lcd.print("Popcorn Count: ");
 
   // Define output and input ports
-  pinMode(Led,OUTPUT);
+  pinMode(led_fc04,OUTPUT);
   pinMode(buttonPin,INPUT);
+
+  // initialize
+  val=digitalRead(buttonPin);
+  prev_pop_state=val;
 }
 
 void loop() {
@@ -71,7 +83,37 @@ void loop() {
   // (note: line 1 is the second row, since counting begins with 0):
   lcd.setCursor(0, 1);
 
-  // Wait (LED still high from last iteration)
+  int reading = digitalRead(buttonPin);
+
+  /* Debouncing logic */
+  // Reset timer if buttonPin toggled
+  if(reading != prev_pop_state)
+  {
+     lastDebounceTime = millis();
+  }
+
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    // Reading has existed for sufficiently long time
+
+    // if state has changed
+    if(reading != pop_state) {
+      pop_state = reading;
+
+      if (pop_state == HIGH) {
+        // blink LED when "Pop" is detected
+        digitalWrite(led_fc04, HIGH);
+        pop_state=val;
+        count++;
+      }
+      else
+      {
+        digitalWrite(led_fc04,LOW);
+      }
+    }
+
+  }
+
+  /*// Wait (LED still high from last iteration)
   while (val==HIGH) {
     val=digitalRead(buttonPin);
   }
@@ -80,12 +122,10 @@ void loop() {
     digitalWrite(led_fc04,LOW);
     val=digitalRead(buttonPin);
   }
+  */
     
-  // blink LED when "Pop" is detected
-  digitalWrite(led_fc04, HIGH);
-  count++;
+  prev_pop_state=reading;
 
-  
   // print the number of seconds since reset:
   lcd.print(count);
 }
